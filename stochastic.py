@@ -40,7 +40,7 @@ def mu(vector, beta):
 
 def gradient(xtrain, ytrain, beta):
     '''
-    Calculates the gradient over entire training set
+    Calculates the gradient for a random training point
     '''
     i = random.randint(0,len(xtrain))
     return (ytrain[i] - mu(xtrain[i], beta)) * xtrain[i]
