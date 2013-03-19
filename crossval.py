@@ -6,6 +6,7 @@ import preprocess
 from matplotlib import pyplot
 import random
 
+
 def nll(xtrain, ytrain, beta):
     '''
     return negative log likelihood of training set given beta
@@ -42,7 +43,7 @@ def gradient(xtrain, ytrain, beta):
     '''
     Calculates the gradient for a random training point
     '''
-    i = random.randint(0,len(xtrain) - 1)
+    i = random.randint(0, len(xtrain) - 1)
     return (ytrain[i] - mu(xtrain[i], beta)) * xtrain[i]
 
 
@@ -57,7 +58,8 @@ def update(xtrain, ytrain, beta, regularization_weight, learning_rate):
     return beta + learning_rate * (update_term)
 
 
-def batch(xtrain, ytrain, threshold, reg_weight, learning_rate, xplot, yplot):
+def batch(xtrain, ytrain, threshold, reg_weight, learning_rate):
+    xplot, yplot = [], []
     beta = zeros(len(xtrain[0]))
     prev_l = 0
     l = 0
@@ -73,7 +75,7 @@ def batch(xtrain, ytrain, threshold, reg_weight, learning_rate, xplot, yplot):
         xplot += [iteration]
         yplot += [l]
         iteration += 1
-    return beta
+    return beta, xplot, yplot
 
 
 def test_error(xtest, ytest, beta):
@@ -86,6 +88,7 @@ def test_error(xtest, ytest, beta):
             error += 1
     return error / len(ytest)
 
+
 def shuffle(xtrain, ytrain):
     '''
     Shuffles xtrain and ytrain and returns the tuple
@@ -95,18 +98,20 @@ def shuffle(xtrain, ytrain):
     shuffled_ytrain = ytrain[shuffle_indices]
     return shuffled_xtrain, shuffled_ytrain
 
+
 def partition(xtrain, ytrain, i):
     '''
     Returns a tuple of the form (test_x, test_y, train_x, train_y)
     for the ith iteration of 5-fold validation
     '''
-    start = 3065/5 * i
-    end = 3065/5 * (i+1)
+    start = 3065 / 5 * i
+    end = 3065 / 5 * (i + 1)
     test_x = xtrain[start:end]
     test_y = ytrain[start:end]
-    train_x = xtrain[:start] + xtrain[end:]
-    train_y = ytrain[:start] + ytrain[end:]
+    train_x = numpy.vstack((xtrain[:start], xtrain[end:]))
+    train_y = numpy.vstack((ytrain[:start], ytrain[end:]))
     return (test_x, test_y, train_x, train_y)
+
 
 def main():
     data = scipy.io.loadmat('spamData.mat')
@@ -119,21 +124,25 @@ def main():
     regularization_weights = [1, 0.5, 0.1, 0.01, 0.001, 0.001]
     for regularization_weight in regularization_weights:
         print 'Regularization_weight %s learning_rate %s' % (regularization_weight, learning_rate)
-        xplot = []
-        yplot = []
-        beta = batch(xtrain, ytrain, threshold, regularization_weight, learning_rate, xplot, yplot)
-        train = test_error(xtrain, ytrain, beta)
-        test = test_error(xtest, ytest, beta)
+        train = 0
+        test = 0
+        for i in range(5):
+            xtest, ytest, xtrain, ytrain = partition(xtrain, ytrain, i)
+            beta, xp, yp = batch(xtrain, ytrain, threshold, regularization_weight, learning_rate)
+            train += test_error(xtrain, ytrain, beta)
+            test += test_error(xtest, ytest, beta)
+        train = train / 5
+        test = test / 5
         with open('res.txt', 'a') as f:
             f.write('%s\t%s\t%s\t%s\n' % (regularization_weight, learning_rate, train, test))
             f.flush()
-        # plot xplot vs yplot
-        pyplot.plot(xplot, yplot)
-        pyplot.title('Training Loss vs Number of Iterations.\nregularization_weight %s learning_rate %s' % (
-            regularization_weight, learning_rate))
-        pyplot.xlabel("Number of Iterations")
-        pyplot.ylabel("Negative Log Likelihood")
-        pyplot.show()
+        # # plot xplot vs yplot
+        # pyplot.plot(xplot, yplot)
+        # pyplot.title('Training Loss vs Number of Iterations.\nregularization_weight %s learning_rate %s' % (
+        #     regularization_weight, learning_rate))
+        # pyplot.xlabel("Number of Iterations")
+        # pyplot.ylabel("Negative Log Likelihood")
+        # pyplot.show()
 
 
 if __name__ == '__main__':
