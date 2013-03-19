@@ -6,6 +6,7 @@ import preprocess
 from matplotlib import pyplot
 import random
 
+
 def nll(xtrain, ytrain, beta):
     '''
     return negative log likelihood of training set given beta
@@ -42,7 +43,7 @@ def gradient(xtrain, ytrain, beta):
     '''
     Calculates the gradient for a random training point
     '''
-    i = random.randint(0,len(xtrain))
+    i = random.randint(0, len(xtrain) - 1)
     return (ytrain[i] - mu(xtrain[i], beta)) * xtrain[i]
 
 
@@ -89,13 +90,13 @@ def test_error(xtest, ytest, beta):
 
 def main():
     data = scipy.io.loadmat('spamData.mat')
-    xtrain = preprocess.log_transform(data['Xtrain'])
+    xtrain = preprocess.binarize(data['Xtrain'])
     # xtrain = data['Xtrain']
     ytrain = data['ytrain']
-    xtest = preprocess.log_transform(data['Xtest'])
+    xtest = preprocess.binarize(data['Xtest'])
     ytest = data['ytest']
-    threshold = 0.1
-    reg_learn_pairs = [(0.1, 0.0001), (0.001, 0.001), (0.001, 0.0001), (0.0001, 0.001), (0.0001, 0.0001)]
+    threshold = 0.001
+    reg_learn_pairs = [(0.1, 0.001), (0.1, 0.0001), (0.001, 0.001), (0.001, 0.0001), (0.0001, 0.001), (0.0001, 0.0001)]
     for regularization_weight, learning_rate in reg_learn_pairs:
         print 'Regularization_weight %s learning_rate %s' % (regularization_weight, learning_rate)
         xplot = []
