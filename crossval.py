@@ -68,7 +68,7 @@ def batch(xtrain, ytrain, threshold, reg_weight, learning_rate):
         beta = update(xtrain, ytrain, beta, reg_weight, learning_rate)
         prev_l = l
         l = nll(xtrain, ytrain, beta)
-        print 'Iteration %s\tNLL %s\tDiff %s' % (iteration, l, l - prev_l)
+        print 'Iteration %s\tNLL %s\tDiff %s' % (iteration, l, abs(l - prev_l))
         if abs(l - prev_l) < threshold:
             print 'Done.'
             break
@@ -121,13 +121,13 @@ def main():
 
     threshold = 0.001
     learning_rate = 0.0001
-    regularization_weights = [1, 0.5, 0.1, 0.01, 0.001, 0.001]
+    regularization_weights = [0.5, 0.1, 0.01, 0.001, 0.0001]
     for regularization_weight in regularization_weights:
         print 'Regularization_weight %s learning_rate %s' % (regularization_weight, learning_rate)
         train = 0
         test = 0
         for i in range(5):
-            xtest, ytest, xtrain, ytrain = partition(xtrain, ytrain, i)
+            xtest, ytest, xtrain, ytrain = partition(shuffled_xtrain, shuffled_ytrain, i)
             beta, xp, yp = batch(xtrain, ytrain, threshold, regularization_weight, learning_rate)
             train += test_error(xtrain, ytrain, beta)
             test += test_error(xtest, ytest, beta)

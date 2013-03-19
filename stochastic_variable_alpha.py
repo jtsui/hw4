@@ -88,13 +88,13 @@ def test_error(xtest, ytest, beta):
 
 def main():
     data = scipy.io.loadmat('spamData.mat')
-    xtrain = preprocess.binarize(data['Xtrain'])
+    xtrain = preprocess.standardize(data['Xtrain'])
     # xtrain = data['Xtrain']
     ytrain = data['ytrain']
-    xtest = preprocess.binarize(data['Xtest'])
+    xtest = preprocess.standardize(data['Xtest'])
     ytest = data['ytest']
     threshold = 0.001
-    for regularization_weight in [0.1, 0.01, 0.001]:
+    for regularization_weight in [0.01, 0.001, 0.0001]:
         print 'Regularization_weight %s' % (regularization_weight)
         xplot = []
         yplot = []
