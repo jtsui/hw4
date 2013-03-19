@@ -43,7 +43,7 @@ def gradient(xtrain, ytrain, beta):
     '''
     Calculates the gradient for a random training point
     '''
-    i = random.randint(0, len(xtrain))
+    i = random.randint(0, len(xtrain) - 1)
     return (ytrain[i] - mu(xtrain[i], beta)) * xtrain[i]
 
 
