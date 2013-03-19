@@ -60,7 +60,7 @@ def batch(xtrain, ytrain, threshold, reg_weight, xplot, yplot):
     beta = zeros(len(xtrain[0]))
     prev_l = 0
     l = 0
-    iteration = 0
+    iteration = 1
     while 1:
         beta = update(xtrain, ytrain, beta, reg_weight, iteration)
         prev_l = l
@@ -94,8 +94,7 @@ def main():
     xtest = preprocess.binarize(data['Xtest'])
     ytest = data['ytest']
     threshold = 0.001
-    reg_learn_pairs = [(0.1, 0.001), (0.1, 0.0001), (0.001, 0.001), (0.001, 0.0001), (0.0001, 0.001), (0.0001, 0.0001)]
-    for regularization_weight in reg_learn_pairs:
+    for regularization_weight in [0.1, 0.01, 0.001]:
         print 'Regularization_weight %s' % (regularization_weight)
         xplot = []
         yplot = []
