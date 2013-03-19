@@ -124,7 +124,7 @@ def main():
     ytrain = data['ytrain']
     shuffled_xtrain, shuffled_ytrain = shuffle(xtrain, ytrain)
 
-    threshold = 0.001
+    threshold = 0.0001
     learning_rate = 0.0001
     print 'Regularization_weight %s learning_rate %s' % (regularization_weight, learning_rate)
     train = 0
