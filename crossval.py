@@ -3,8 +3,8 @@ import scipy.io
 import numpy
 import math
 import preprocess
-from matplotlib import pyplot
 import random
+import sys
 
 
 def nll(xtrain, ytrain, beta):
@@ -114,6 +114,11 @@ def partition(xtrain, ytrain, i):
 
 
 def main():
+    if len(sys.argv) != 2:
+        print 'Missing args. Usage: python crossval.py [regularization weight]'
+        return
+    the_file, regularization_weight = sys.argv
+    regularization_weight = float(regularization_weight)
     data = scipy.io.loadmat('spamData.mat')
     xtrain = preprocess.log_transform(data['Xtrain'])
     ytrain = data['ytrain']
@@ -121,21 +126,20 @@ def main():
 
     threshold = 0.001
     learning_rate = 0.0001
-    regularization_weights = [0.5, 0.1, 0.01, 0.001, 0.0001]
-    for regularization_weight in regularization_weights:
-        print 'Regularization_weight %s learning_rate %s' % (regularization_weight, learning_rate)
-        train = 0
-        test = 0
-        for i in range(5):
-            xtest, ytest, xtrain, ytrain = partition(shuffled_xtrain, shuffled_ytrain, i)
-            beta, xp, yp = batch(xtrain, ytrain, threshold, regularization_weight, learning_rate)
-            train += test_error(xtrain, ytrain, beta)
-            test += test_error(xtest, ytest, beta)
-        train = train / 5
-        test = test / 5
-        with open('res.txt', 'a') as f:
-            f.write('%s\t%s\t%s\t%s\n' % (regularization_weight, learning_rate, train, test))
-            f.flush()
+    print 'Regularization_weight %s learning_rate %s' % (regularization_weight, learning_rate)
+    train = 0
+    test = 0
+    for i in range(5):
+        xtest, ytest, xtrain, ytrain = partition(shuffled_xtrain, shuffled_ytrain, i)
+        beta, xp, yp = batch(xtrain, ytrain, threshold, regularization_weight, learning_rate)
+        train += test_error(xtrain, ytrain, beta)
+        test += test_error(xtest, ytest, beta)
+    train = train / 5
+    test = test / 5
+    print '%s\t%s\t%s\t%s' % (regularization_weight, learning_rate, train, test)
+    with open('res%s.txt' % regularization_weight, 'a') as f:
+        f.write('%s\t%s\t%s\t%s\n' % (regularization_weight, learning_rate, train, test))
+        f.flush()
         # # plot xplot vs yplot
         # pyplot.plot(xplot, yplot)
         # pyplot.title('Training Loss vs Number of Iterations.\nregularization_weight %s learning_rate %s' % (
