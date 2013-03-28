@@ -95,8 +95,8 @@ def main():
     ytrain = data['ytrain']
     xtest = preprocess.binarize(data['Xtest'])
     ytest = data['ytest']
-    threshold = 0.001
-    reg_learn_pairs = [(0.1, 0.001), (0.1, 0.0001), (0.001, 0.001), (0.001, 0.0001), (0.0001, 0.001), (0.0001, 0.0001)]
+    threshold = 0.0001
+    reg_learn_pairs = [(0.01, 0.0001)]
     for regularization_weight, learning_rate in reg_learn_pairs:
         print 'Regularization_weight %s learning_rate %s' % (regularization_weight, learning_rate)
         xplot = []
